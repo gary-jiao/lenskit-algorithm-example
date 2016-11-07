@@ -21,6 +21,10 @@
  */
 package org.grouplens.lenskit.hello;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.grouplens.lenskit.ItemRecommender;
 import org.grouplens.lenskit.ItemScorer;
 import org.grouplens.lenskit.Recommender;
@@ -32,14 +36,10 @@ import org.grouplens.lenskit.baseline.UserMeanItemScorer;
 import org.grouplens.lenskit.core.LenskitConfiguration;
 import org.grouplens.lenskit.core.LenskitRecommender;
 import org.grouplens.lenskit.data.dao.EventDAO;
-import org.grouplens.lenskit.data.dao.SimpleFileRatingDAO;
+import org.grouplens.lenskit.data.text.TextEventDAO;
 import org.grouplens.lenskit.scored.ScoredId;
 import org.grouplens.lenskit.transform.normalize.BaselineSubtractingUserVectorNormalizer;
 import org.grouplens.lenskit.transform.normalize.UserVectorNormalizer;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Demonstration app for LensKit. This application builds an item-item CF model
@@ -49,6 +49,7 @@ import java.util.List;
  */
 public class HelloLenskit implements Runnable {
     public static void main(String[] args) {
+    	args = new String[]{HelloLenskit.class.getClassLoader().getResource("data/u.data").getPath(), "194"};
         HelloLenskit hello = new HelloLenskit(args);
         try {
             hello.run();
@@ -89,7 +90,7 @@ public class HelloLenskit implements Runnable {
         // We first need to configure the data access.
         // We will use a simple delimited file; you can use something else like
         // a database (see JDBCRatingDAO).
-        EventDAO dao = new SimpleFileRatingDAO(inputFile, delimiter);
+        EventDAO dao = TextEventDAO.ratings(inputFile, delimiter);
 
         // Second step is to create the LensKit configuration...
         LenskitConfiguration config = new LenskitConfiguration();
